@@ -2,9 +2,11 @@ package com.sulimann.springsecurityexample.configs;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,14 +20,24 @@ public class WebSecurityConfig {
   @Value("${cors.origins}")
   private String corsOrigins;
 
+  @Autowired
+	private Environment env;
+
   @Bean
   SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
+      .csrf(csrf -> csrf.disable())
       .authorizeHttpRequests(authz -> authz
-        .requestMatchers("/init", "/init/**").authenticated()
+        .requestMatchers("/init", "/usuarios").authenticated()
         .anyRequest().permitAll())
       .httpBasic(Customizer.withDefaults())
       .cors(cors -> cors.configurationSource(this.corsConfigurationSource()));
+
+    // H2
+		if (Arrays.asList(this.env.getActiveProfiles()).contains("test")) {
+			http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
+		}
+
     return http.build();
   }
 
