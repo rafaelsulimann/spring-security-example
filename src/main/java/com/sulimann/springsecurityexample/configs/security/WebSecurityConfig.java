@@ -1,4 +1,4 @@
-package com.sulimann.springsecurityexample.configs;
+package com.sulimann.springsecurityexample.configs.security;
 
 import java.util.Arrays;
 
@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -21,22 +23,22 @@ public class WebSecurityConfig {
   private String corsOrigins;
 
   @Autowired
-	private Environment env;
+  private Environment env;
 
   @Bean
   SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
-      .csrf(csrf -> csrf.disable())
-      .authorizeHttpRequests(authz -> authz
-        .requestMatchers("/init", "/usuarios").authenticated()
-        .anyRequest().permitAll())
-      .httpBasic(Customizer.withDefaults())
-      .cors(cors -> cors.configurationSource(this.corsConfigurationSource()));
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(authz -> authz
+            .requestMatchers("/init").authenticated()
+            .anyRequest().permitAll())
+        .httpBasic(Customizer.withDefaults())
+        .cors(cors -> cors.configurationSource(this.corsConfigurationSource()));
 
     // H2
-		if (Arrays.asList(this.env.getActiveProfiles()).contains("test")) {
-			http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
-		}
+    if (Arrays.asList(this.env.getActiveProfiles()).contains("test")) {
+      http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
+    }
 
     return http.build();
   }
@@ -55,6 +57,11 @@ public class WebSecurityConfig {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", corsConfig);
     return source;
+  }
+
+  @Bean
+  PasswordEncoder passwordEncoder(){
+    return new BCryptPasswordEncoder();
   }
 
 }

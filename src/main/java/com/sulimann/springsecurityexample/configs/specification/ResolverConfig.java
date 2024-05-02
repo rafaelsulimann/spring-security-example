@@ -1,4 +1,4 @@
-package com.sulimann.springsecurityexample.configs;
+package com.sulimann.springsecurityexample.configs.specification;
 
 import java.util.List;
 
