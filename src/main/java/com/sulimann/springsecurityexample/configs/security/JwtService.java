@@ -30,8 +30,7 @@ public class JwtService {
         .issuedAt(now)
         .expiresAt(now.plusSeconds(expiry))
         .subject(authentication.getName())
-        .audience(authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-        .claim("scope", List.of("read", "write").stream().collect(Collectors.joining(" ")))
+        .claim("scope", authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(" ")))
         .id(UUID.randomUUID().toString())
         .build();
 
