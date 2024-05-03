@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +29,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 
 @Configuration
+@EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
 	@Value("${cors.origins}")
@@ -49,7 +50,7 @@ public class WebSecurityConfig {
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests((authorize) -> authorize
 						.requestMatchers("/login", "/usuarios").permitAll()
-						.requestMatchers("/init").hasAuthority("SCOPE_ADMIN")
+						// .requestMatchers("/init").hasAuthority("SCOPE_ADMIN")
 						.anyRequest().authenticated())
 				.httpBasic(Customizer.withDefaults())
 				.oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()))

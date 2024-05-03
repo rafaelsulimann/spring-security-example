@@ -11,7 +11,7 @@ import com.sulimann.springsecurityexample.utils.constants.Path;
 @RestController
 public class InitController {
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @GetMapping(value = Path.INIT)
     public ResponseEntity<Object> init(){
         return ResponseEntity.status(HttpStatus.OK).body("Get realizado com sucesso!");
