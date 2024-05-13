@@ -74,4 +74,8 @@ public class Usuario implements UserDetails {
     return true;
   }
 
+  public boolean hasRole(String roleName) {
+    return this.roles.stream().anyMatch(role -> role.getAuthority().equals(roleName));
+  }
+
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 
+import com.sulimann.springsecurityexample.configs.security.ForbiddenException;
 import com.sulimann.springsecurityexample.exceptions.ResourceNotFoundException;
 import com.sulimann.springsecurityexample.utils.constants.ErrorMessage;
 
@@ -56,6 +57,13 @@ public class ControllerExceptionHandler {
     public ResponseEntity<CustomErrorDTO> handleResourceAccessException(ResourceAccessException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
         CustomErrorDTO error = new CustomErrorDTO(LocalDateTime.now(), status.value(), "Serviço indisponível: " + e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(error);
+    }
+
+     @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<CustomErrorDTO> forbiddenException(ForbiddenException e, HttpServletRequest request){
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        CustomErrorDTO error = new CustomErrorDTO(LocalDateTime.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(error);
     }
 
